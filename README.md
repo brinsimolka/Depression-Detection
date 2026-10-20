@@ -27,7 +27,7 @@ Fine-tuned `bert-base-uncased` that classifies an English text as **depressed** 
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Depression-Detection.git
+git clone https://github.com/brinsimolka/Depression-Detection.git
 cd Depression-Detection
 python -m venv venv
 venv\Scripts\activate
