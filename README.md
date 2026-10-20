@@ -22,42 +22,58 @@ Fine-tuned `bert-base-uncased` that classifies an English text as **depressed** 
 4. Fine-tuning of `bert-base-uncased` with a 2-class head, class-weighted cross-entropy, AdamW (lr 2e-5), warm-up, up to 4 epochs.
 5. Best epoch selected on validation F1, early stopping, final evaluation on the untouched test set.
 
-## Results
+## How to run
 
-Fill in after training:
-
-| Evaluation | Accuracy | F1 (depressed) |
-|---|---|---|
-| Test split of this dataset | to fill | to fill |
-| External test: Reddit Depression Severity (minimum vs rest) | to fill | to fill |
-
-## Limitations
-
-- In this dataset, texts labelled "not depressed" are much shorter than "depressed" ones (median 13 vs 78 words), so a high in-dataset score can partly reflect text length and style rather than depression. The external test on a different dataset is the more reliable measure.
-- English only. Binary output, no severity level.
-- Trained on Reddit text; behaviour on other writing styles is not guaranteed.
-
-## Run it
+### 1. Clone and install
 
 ```bash
+git clone https://github.com/YOUR_USERNAME/Depression-Detection.git
+cd Depression-Detection
 python -m venv venv
-venv\Scripts\activate            # Windows (source venv/bin/activate on Linux/macOS)
+venv\Scripts\activate
 pip install -r requirements.txt
-python depression_pipeline.py    # GPU strongly recommended (e.g. Google Colab T4)
+```
+
+On Linux or macOS, activate the environment with `source venv/bin/activate`.
+
+### 2. Train the model
+
+```bash
+python depression_pipeline.py
+```
+
+A GPU is strongly recommended. On Google Colab, select Runtime > Change runtime type > T4 GPU, then run:
+
+```bash
+!git clone https://github.com/YOUR_USERNAME/Depression-Detection.git
+%cd Depression-Detection
+!pip install -q transformers accelerate seaborn scikit-learn
+!python depression_pipeline.py
+```
+
+Optional: for an external test, download `Reddit_depression_dataset.csv` from
+[usmaann/Depression_Severity_Dataset](https://github.com/usmaann/Depression_Severity_Dataset)
+and place it in the project folder before training.
+
+Training produces the `depression_bert/` folder (the model and tokenizer), `confusion_matrix.png` and `class_distribution.png`.
+
+### 3. Start the API
+
+```bash
 uvicorn api:app --reload
 ```
 
-Optional: place `Reddit_depression_dataset.csv` from
-[usmaann/Depression_Severity_Dataset](https://github.com/usmaann/Depression_Severity_Dataset)
-in the project folder before training to get the external test.
-
-Open `http://127.0.0.1:8000/docs` and call `POST /predict`:
+Open `http://127.0.0.1:8000/docs`, choose `POST /predict`, click "Try it out" and send:
 
 ```json
 {"text": "I feel empty and nothing matters anymore"}
 ```
 
-The trained model folder `depression_bert/` is not stored in the repository because of its size (about 440 MB). Run the training script to generate it.
+Example response:
+
+```json
+{"label": "depressed", "probability_depression": 0.97, "disclaimer": "Educational tool, not a medical diagnosis."}
+```
 
 ## Stack
 
