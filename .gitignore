@@ -1,0 +1,11 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+results/
+logs/
+depression_bert/
+*.zip
+.ipynb_checkpoints/
+.vscode/
+.env
